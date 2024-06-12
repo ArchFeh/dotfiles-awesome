@@ -1,16 +1,17 @@
--- Notification handling library
-local naughty = require("naughty")
+local bling = require("modules.bling")
 
--- Playerctl
-local playerctl = require("module.bling").signal.playerctl.lib()
+local playerctl = {}
+local instance = nil
 
-playerctl:connect_signal("metadata", function(_, title, artist, album_path, album, new, player_name)
-	if new == true then
-		naughty.notify({
-			app_name = "Music",
-			title = title,
-			text = artist,
-			image = album_path,
-		})
-	end
-end)
+local function new()
+	return bling.signal.playerctl.lib({
+		update_on_activity = true,
+		player = { "spotify", "mpd", "%any" },
+		debounce_delay = 1,
+	})
+end
+
+if not instance then
+	instance = new()
+end
+return instance
